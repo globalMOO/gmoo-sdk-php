@@ -19,7 +19,7 @@ contains several complete examples on how to integrate with the SDK. Follow the 
 in the [README](https://github.com/globalMOO/gmoo-sdk-suite/tree/main/php#readme) on how
 to get started with it.
 
-### Create Model
+### Create a Model
 ```php
 <?php
 
@@ -30,9 +30,6 @@ use GlobalMoo\Exception\InvalidRequestException;
 use GlobalMoo\Request\CreateModel;
 
 try {
-    // The globalMOO client requires the
-    // GMOO_API_KEY and GMOO_API_URI keys
-    // to present in the $_ENV superglobal
     $gmooClient = new \GlobalMoo\Client();
 
     $request = new \GlobalMoo\Request\CreateModel(...[
