@@ -1,6 +1,6 @@
 {
-    "name": "globalmoo/gmoo-sdk-php",
-    "description": "globalMOO SDK for PHP",
+    "name": "globalmoo/globalmoo-sdk",
+    "description": "The PHP SDK for the globalMOO REST API",
     "type": "library",
     "license": "MIT",
     "require": {
