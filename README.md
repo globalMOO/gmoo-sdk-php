@@ -6,9 +6,9 @@ This SDK makes it easy for PHP developers to integrate with the globalMOO API.
    which will provide you with your API key.
 2. **Install the SDK** Next, install this SDK on your machine with the following Composer command:
    ```shell
-   composer require globalmoo/gmoo-sdk-php
+   composer require globalmoo/globalmoo-sdk
    ```
-   You will need PHP 8.3 compiled with the `curl` and `json` extensions.
+   You will need PHP 8.4 compiled with the `curl` and `json` extensions.
 3. **Configure credentials** The SDK depends on two environment variables to exist
     in the `$_ENV` superglobal: `GMOO_API_KEY` and `GMOO_API_URI`. See the `.env.dist`
     file for valid values of the `GMOO_API_URI` environment variable.
