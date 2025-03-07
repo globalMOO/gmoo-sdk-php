@@ -28,15 +28,6 @@ final class CredentialsTest extends TestCase
         }
     }
 
-    public function testConstructorDefaultsBaseUriToDevelopmentEnvironment(): void
-    {
-        $credentials = new Credentials(...[
-            'apiKey' => 'test_api_key',
-        ]);
-
-        $this->assertEquals('https://api-dev.globalmoo.ai/api/', $credentials->getBaseUri());
-    }
-
     public function testConstructorRequiresValidBaseUri(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -54,7 +45,7 @@ final class CredentialsTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "validateTls" argument must be true when using an official globalMOO base URI.');
 
-        $credentials = new Credentials(...[
+        new Credentials(...[
             'apiKey' => 'test_key',
             'apiUri' => $baseUri,
             'validateTls' => false,
@@ -170,6 +161,24 @@ final class CredentialsTest extends TestCase
         ]);
 
         $this->assertEquals(getenv($key), $credentials->getApiKey());
+    }
+
+    public function testCreatingProductionCredentialsUsesProductionUri(): void
+    {
+        $credentials = Credentials::createProduction(...[
+            'apiKey' => 'production_api_key',
+        ]);
+
+        $this->assertEquals('https://app.globalmoo.com/api/', $credentials->getBaseUri());
+    }
+
+    public function testCreatingDevelopmentCredentialsUsesProductionUri(): void
+    {
+        $credentials = Credentials::createDevelopment(...[
+            'apiKey' => 'development_api_key',
+        ]);
+
+        $this->assertEquals('https://api-dev.globalmoo.ai/api/', $credentials->getBaseUri());
     }
 
 }
