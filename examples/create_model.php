@@ -6,6 +6,10 @@ use GlobalMoo\Client;
 use GlobalMoo\Exception\ExceptionInterface;
 use GlobalMoo\Exception\InvalidRequestException;
 use GlobalMoo\Request\CreateModel;
+use Symfony\Component\Dotenv\Dotenv;
+
+// Load .env file
+new Dotenv()->load(__DIR__ . '/../.env');
 
 try {
     $gmooClient = new Client();
