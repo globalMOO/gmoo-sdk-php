@@ -4,51 +4,67 @@ namespace GlobalMoo;
 
 use GlobalMoo\Exception\InvalidArgumentException;
 
-readonly class Credentials implements CredentialInterface
+class Credentials implements CredentialInterface
 {
 
-    /**
-     * @var non-empty-string
-     */
-    private string $apiKey;
-
-    /**
-     * @var non-empty-string
-     */
-    private string $apiUri;
-
     public function __construct(
-        ?string $apiKey = null,
-        ?string $apiUri = 'https://api-dev.globalmoo.ai/api/',
+        private ?string $apiKey = null,
+        private ?string $apiUri = null,
         private bool $validateTls = true,
     )
     {
-        $this->apiKey = $this->load('GMOO_API_KEY', $apiKey);
-
-        $baseUri = $this->load('GMOO_API_URI', $apiUri);
-        $isValid = filter_var($baseUri, FILTER_VALIDATE_URL);
-
-        if (false === $isValid) {
-            throw new InvalidArgumentException(sprintf('The API URI "%s" is not a valid URI and can not be used.', $baseUri));
+        if (null === $this->apiKey) {
+            $this->apiKey = $this->load(...[
+                'key' => 'GMOO_API_KEY'
+            ]);
         }
 
-        $host = parse_url($baseUri, PHP_URL_HOST);
-
-        if (is_string($host) && !$this->shouldValidateTls() && str_contains(strtolower($host), 'globalmoo.ai')) {
-            throw new InvalidArgumentException('The "validateTls" argument must be true when using an official globalMOO base URI.');
+        if (null === $this->apiUri) {
+            $this->apiUri = $this->load(...[
+                'key' => 'GMOO_API_URI',
+            ]);
         }
 
-        $this->apiUri = $baseUri;
+        // Ensure the API URI is valid
+        if (false === filter_var($this->apiUri, FILTER_VALIDATE_URL)) {
+            throw new InvalidArgumentException(sprintf('The API URI "%s" is not a valid URI and can not be used.', $this->apiUri));
+        }
+
+        /** @var non-empty-string $host */
+        $host = parse_url($this->apiUri, PHP_URL_HOST);
+
+        if (!$this->shouldValidateTls()) {
+            $officialDomains = [
+                'globalmoo.ai',
+                'globalmoo.com',
+            ];
+
+            foreach ($officialDomains as $domain) {
+                if (str_ends_with(strtolower($host), $domain)) {
+                    throw new InvalidArgumentException('The "validateTls" argument must be true when using an official globalMOO base URI.');
+                }
+            }
+        }
+    }
+
+    public static function createProduction(?string $apiKey = null): self
+    {
+        return new self($apiKey, 'https://app.globalmoo.com/api/', true);
+    }
+
+    public static function createDevelopment(?string $apiKey = null): self
+    {
+        return new self($apiKey, 'https://api-dev.globalmoo.ai/api/', true);
     }
 
     public function getApiKey(): string
     {
-        return $this->apiKey;
+        return strval($this->apiKey);
     }
 
     public function getBaseUri(): string
     {
-        return $this->apiUri;
+        return strval($this->apiUri);
     }
 
     public function shouldValidateTls(): bool
@@ -56,15 +72,8 @@ readonly class Credentials implements CredentialInterface
         return $this->validateTls;
     }
 
-    /**
-     * @return non-empty-string
-     */
-    private function load(string $key, ?string $default): string
+    private function load(string $key): string
     {
-        if (!empty($default)) {
-            return $default;
-        }
-
         if (false === ($value = getenv($key))) {
             $value = ($_ENV[$key] ?? null);
         }

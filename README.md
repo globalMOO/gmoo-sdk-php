@@ -10,8 +10,7 @@ This SDK makes it easy for PHP developers to integrate with the globalMOO API.
    ```
    You will need PHP 8.4 compiled with the `curl` and `json` extensions.
 3. **Configure credentials** The SDK depends on two environment variables to exist
-    in the `$_ENV` superglobal: `GMOO_API_KEY` and `GMOO_API_URI`. See the `.env.dist`
-    file for valid values of the `GMOO_API_URI` environment variable.
+    in the `$_ENV` superglobal: `GMOO_API_KEY` and `GMOO_API_URI`.
 
 ## Quick Examples
 The `php` directory of the [gmoo-sdk-suite](https://github.com/globalMOO/gmoo-sdk-suite)
@@ -25,19 +24,22 @@ to get started with it.
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+use GlobalMoo\Client;
 use GlobalMoo\Exception\ExceptionInterface;
 use GlobalMoo\Exception\InvalidRequestException;
 use GlobalMoo\Request\CreateModel;
 
 try {
-    $gmooClient = new \GlobalMoo\Client();
+    $gmooClient = new Client();
 
-    $request = new \GlobalMoo\Request\CreateModel(...[
-        'name' => 'Linear Regression Model - v1.0.0',
-        'description' => 'Linear model with 3 input variables',
+    $createModelRequest = new CreateModel(...[
+        'name' => 'Linear Example - v1.0.0',
+        'description' => 'Created using the globalMOO PHP SDK',
     ]);
 
-    $model = $gmooClient->createModel($request);
+    $model = $gmooClient->createModel(...[
+        'request' => $createModelRequest,
+    ]);
 
     echo(sprintf("Successfully created a model with ID %d.\n", $model->id));
 } catch (InvalidRequestException $e) {
