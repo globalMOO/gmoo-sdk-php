@@ -9,10 +9,12 @@ final readonly class RegisterAccount extends AbstractRequest
 
     public function __construct(
         public string $company,
-        public string $name,
+        public string $firstName,
+        public string $lastName,
         public string $email,
         public string $password,
         public string $timeZone,
+        public bool $agreement = true,
     )
     {
     }
@@ -31,16 +33,18 @@ final readonly class RegisterAccount extends AbstractRequest
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, string|bool>
      */
     public function toArray(): array
     {
         return [
             'company' => $this->company,
-            'name' => $this->name,
+            'firstName' => $this->firstName,
+            'lastName' => $this->lastName,
             'email' => $this->email,
             'password' => $this->password,
             'timeZone' => $this->timeZone,
+            'agreement' => $this->agreement,
         ];
     }
 
